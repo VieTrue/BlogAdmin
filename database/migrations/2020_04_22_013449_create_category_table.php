@@ -15,7 +15,7 @@ class CreateCategoryTable extends Migration
     {
         Schema::create('category', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('name')->index()->default('')->comment('名称');
+            $table->string('title')->index()->default('')->comment('名称');
             $table->string('slug')->index()->default('')->comment('标识');
             $table->integer('parent_id')->index()->default('0')->comment('父ID');
             $table->integer('order')->default('0')->comment('排序');
@@ -23,8 +23,10 @@ class CreateCategoryTable extends Migration
             $table->tinyInteger('status')->index()->default('1')->comment('状态');
             $table->text('image')->nullable()->comment('图片');
             $table->timestamps();
+            $table->softDeletes();
         });
     }
+
 
     /**
      * Reverse the migrations.
