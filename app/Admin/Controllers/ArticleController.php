@@ -30,7 +30,6 @@ class ArticleController extends AdminController
      */
     protected function grid()
     {
-
         return Grid::make(ArticleModel::with(['category','tags']), function (Grid $grid) {
             $grid->responsive();
 
@@ -135,7 +134,17 @@ class ArticleController extends AdminController
 
             $form->tags('tags')->pluck('title', 'id')->options(TagModel::all())->saving(function ($value) {
                 if ($value) {
-                    return explode(',', $value);
+                    $array = explode(',', $value);
+                    $data = [];
+                    foreach ($array as $key => $val) {
+                        if (is_numeric($val)) {
+                            $data[] = $val;
+                        } else {
+                            $flight = TagModel::create(['title' => $val]);
+                            $data[] = $flight->id;
+                        }
+                    }
+                    return $data;
                 }
             });
             $form->display('id');
@@ -156,7 +165,7 @@ class ArticleController extends AdminController
                 $form->switch('is_show')->default('1');
                 $form->switch('is_comment')->default('0');
 
-                $form->number('comment')->default('0');
+                // $form->number('comment')->default('0');
                 $form->number('likes')->default('0');
                 $form->number('views')->default('0');
 

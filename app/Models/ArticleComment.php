@@ -24,9 +24,15 @@ class ArticleComment extends Model
     protected static function booted()
     {
         static::addGlobalScope('order', function (Builder $builder) {
-            // $builder->orderBy('order','desc');
             $builder->latest('updated_at');
         });
+
+        // 删除时执行
+        static::deleting(function($model) {
+            // 删除关联的回复
+            $model->trashed() ? $model->replyList()->forceDelete() : $model->replyList()->delete() ;
+        });
+
     }
 
     /**

@@ -32,7 +32,7 @@ class CommentController extends Controller
                 'ip'=>ip2long($ip)
             ];
             $res = Comment::create($data);
-            Article::where('id', $id)->increment('comment');
+            Article::where('id', $id)->increment('comments');
             // if ($reply_id) {
             //     Comment::where('id', $reply_id)->increment('reply');
             // }

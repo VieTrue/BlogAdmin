@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Builder;
 
 class Article extends Model
@@ -21,11 +22,6 @@ class Article extends Model
         'original' => 'boolean',
     ];
 
-    // protected static function booted()
-    // {
-    //     static::addGlobalScope(new AgeScope);
-    // }
-
     /**
      * 重写模型的「booted」方法
      *
@@ -33,9 +29,20 @@ class Article extends Model
      */
     protected static function booted()
     {
+        // 查询排序
         static::addGlobalScope('order', function (Builder $builder) {
             $builder->orderBy('order','desc');
             $builder->latest('updated_at');
+        });
+
+        // 删除时执行
+        static::deleting(function($model) {
+            if ($model->trashed()) {
+                $model->comment()->forceDelete();
+                ArticleTag::where('article_id',$model->id)->delete();
+            } else {
+                $model->comment()->delete();
+            }
         });
     }
 
@@ -71,11 +78,14 @@ class Article extends Model
         return $this->belongsToMany(Tag::class, ArticleTag::class);
     }
 
-    public static function showinfo($id,$ip)
+    /**
+     * 关联评论模型
+     *
+     * @return HasMany
+     */
+    public function comment(): HasMany
     {
-        // $this->where('id',$id)->increment('views');
-        $data = self::find($id);
-        return $data;
+        return $this->hasMany(ArticleComment::class, 'article_id')->latest();
     }
 
 }

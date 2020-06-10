@@ -19,6 +19,21 @@ class Category extends Model implements Sortable
 
     protected $table = 'category';
 
+
+    /**
+     * 重写模型的「booted」方法
+     *
+     * @return void
+     */
+    protected static function booted()
+    {
+        // 删除时执行
+        static::deleting(function($model) {
+            // 删除关联的评论
+            $model->article()->forceDelete();
+        });
+    }
+
     /**
      * 关联文章模型
      *

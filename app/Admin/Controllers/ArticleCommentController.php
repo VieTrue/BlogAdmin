@@ -10,7 +10,7 @@ use Dcat\Admin\Controllers\AdminController;
 
 use App\Admin\Actions\Recycle\Restore;
 use App\Admin\Actions\Recycle\BatchRestore;
-
+use App\Models\ArticleComment as CommentModel;
 
 class ArticleCommentController extends AdminController
 {
@@ -41,12 +41,12 @@ class ArticleCommentController extends AdminController
             });
             $grid->actions(function (Grid\Displayers\Actions $actions) {
                 if (request('_scope_') == 'trashed') {
-                    $actions->append(new Restore(ArticleModel::class));
+                    $actions->append(new Restore(CommentModel::class));
                 }
             });
             $grid->batchActions(function (Grid\Tools\BatchActions $batch) {
                 if (request('_scope_') == 'trashed') {
-                    $batch->add(new BatchRestore(ArticleModel::class));
+                    $batch->add(new BatchRestore(CommentModel::class));
                 }
             });
         });

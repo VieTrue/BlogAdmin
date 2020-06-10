@@ -32,7 +32,8 @@ class Article extends JsonResource
             'original' => $this->original,
             'originalurl' => $this->originalurl,
             'updated_at' => date('Y-m-d H:i:s',strtotime($this->updated_at)),
-            'comment' => $this->comment,
+            // 'comment' => $this->comment,
+            'comments_count' => $this->comments,
         ];
 
     }

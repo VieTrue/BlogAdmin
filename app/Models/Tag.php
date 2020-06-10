@@ -12,6 +12,19 @@ class Tag extends Model
     protected $table = 'tags';
     protected $fillable = ['title'];
 
+    /**
+     * 重写模型的「booted」方法
+     *
+     * @return void
+     */
+    protected static function booted()
+    {
+        // 删除时执行
+        static::deleting(function($model) {
+            // 删除关联的中间表记录
+            ArticleTag::where('tag_id',$model->id)->delete();
+        });
+    }
 
     /**
      * 关联标签模型
@@ -20,7 +33,6 @@ class Tag extends Model
      */
     public function article(): BelongsToMany
     {
-        // return $this->BelongsToMany(Tag::class, 'catid');
         return $this->belongsToMany(Article::class, ArticleTag::class);
     }
 
